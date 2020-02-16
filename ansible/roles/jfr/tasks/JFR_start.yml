@@ -1,0 +1,23 @@
+---
+- name: make sure jfr profile is in place
+  copy:
+    src: "{{ JFR_PROFILE_SRC }}"
+    dest: "{{ JFR_PROFILE_DEST }}"
+
+- name: grab weblogic server PID
+  shell: "/usr/sbin/lsof -ti :8001"
+  register: wl_pid
+
+- name: print stdout for weblogic pid
+  debug: 
+    var: wl_pid.stdout
+
+- name: run jcmd jfr check
+  shell: >-
+    {{ JCMD }} {{ wl_pid.stdout }} 
+    JFR.start name={{ ansible_hostname }} 
+    filename={{ JFR_File_Dir }}{{ JFR_Filename }}
+    compress={{ JFR_Compress }} 
+    settings={{ JFR_Settings }} 
+    duration={{ JFR_Duration }}
+  register: start_jfr

@@ -1,0 +1,39 @@
+---
+- name: grab weblogic server PID
+  shell: "/usr/sbin/lsof -ti :8001"
+  register: wl_pid
+
+- name: print stdout for weblogic pid
+  debug: 
+    var: wl_pid.stdout
+
+- name: run jcmd jfr check
+  shell: "{{ JCMD }} {{ wl_pid.stdout }} JFR.check | grep {{ JFR_NAME_SEARCH }}"
+  register: running_jfr
+  failed_when: running_jfr.rc > 1  
+
+- name: print stdout of jfr check, will either be a string or failed return code
+  debug: 
+    var: running_jfr.stdout
+  when: running_jfr.rc == 0
+
+- name: find recording value if debug is found
+  shell: "{{ JCMD }} {{ wl_pid.stdout }} JFR.check | grep {{ JFR_NAME_SEARCH }} | grep -oP '(?<=recording=). '"
+  register: jfr_recording
+  when: running_jfr.rc == 0
+
+- name: record stdout of jfr_recording
+  debug:
+    var: jfr_recording.stdout
+  when: running_jfr.rc == 0
+
+- name: run stop jfr command to kill any running debug jfrs
+  shell: "{{ JCMD }} {{ wl_pid.stdout }} JFR.stop recording={{ jfr_recording.stdout }}"
+  when: jfr_recording.changed == true
+  register: stopped_jfr
+  notify: "killed_jfrs"
+
+- name: return jfrs that were stopped
+  debug:
+    msg: "Stopped JFR on {{ ansible_hostname }} "
+  when: jfr_recording.changed == true

@@ -1,0 +1,12 @@
+---
+JFR_PROFILE_SRC: files/profile5.jfc
+JFR_PROFILE_DEST: {{ path on remote host to jfc profile file }}
+JCMD: /opt/java/{{ java_version }}/bin/jcmd
+JFR_File_Dir: {{ path to store recording }}
+JFR_Filename: "{{ ansible_host }}{{ grp_env }}{{ ansible_date_time }}.jfr"
+JFR_Compress: true
+JFR_Settings: "{{ JFR_PROFILE_DEST }}"
+JFR_Duration: 180s
+JFR_DEST: {{ location to send recording }}
+JFR_NAME_SEARCH: debug
+SLACK_CHANNEL: "{{ prod_informational }}"

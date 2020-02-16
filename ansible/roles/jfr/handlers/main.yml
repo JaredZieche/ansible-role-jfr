@@ -1,0 +1,13 @@
+---
+- name: notify jfr check job results
+  slack:
+    token: "{{ SLACK_CHANNEL }}"
+    msg: "Checked Weblogic Servers for JFRs running in debug mode "
+  run_once: true
+  listen: "debug_none_found"
+
+- name: notify jfrs killed
+  slack:
+    token: "{{ SLACK_CHANNEL }}"
+    msg: "Killed JFR on {{ ansible_hostname }}.{{ grp_env }}"
+  listen: "killed_jfrs"
