@@ -29,12 +29,7 @@ None.
 | | JFR_NAME_SEARCH | string | grep search string to find the name of a specific recording revealed in the JFR.check command |
 | | SLACK_CHANNEL | string | channel to which handler slack notification will be sent |
 | defaults/main.yml | | |
-| | prod_informational | string | slack channel token |
-| | prod_actionable | string | slack channel token |
-| | non-prod_actionable | string | slack channel token |
-| | non-prod_info | string | slack channel token |
-| | prodops_deployments | string | slack channel token |
-| | prodops_deployment_notifications | string | slack channel token |
+| | channel_name | string | slack channel token |
 
 ## Current Entries/Tasks
 |  Name  |  Hosts | File |
